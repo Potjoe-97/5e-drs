@@ -68,6 +68,19 @@ for f in "${readme_files[@]}"; do
   # Replace path separators only (user asked to keep accents/spaces)
   title_sanitized="${title//\//-}"
 
+  # Remove straight quotes, smart quotes and guillemets to avoid invalid filenames
+  title_sanitized="${title_sanitized//\"/}"   # remove double quote "
+  title_sanitized="${title_sanitized//\'/}"   # remove apostrophe '
+  title_sanitized="${title_sanitized//«/}"    # remove French guillemet left
+  title_sanitized="${title_sanitized//»/}"    # remove French guillemet right
+  title_sanitized="${title_sanitized//“/}"    # remove left double smart quote
+  title_sanitized="${title_sanitized//”/}"    # remove right double smart quote
+  title_sanitized="${title_sanitized//‘/}"    # remove left single smart quote
+  title_sanitized="${title_sanitized//’/}"    # remove right single smart quote
+
+  # Trim again (in case removal created leading/trailing spaces)
+  title_sanitized="$(echo "$title_sanitized" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')"
+
   dst="$parent/$title_sanitized.md"
   src_norm="$f"
   dst_norm="$dst"
